@@ -18,15 +18,16 @@ class User(BaseModel):
     guid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), unique=True, default=uuid.uuid4)
     password: Mapped[str] = mapped_column(String(25))
     first_name: Mapped[str] = mapped_column(String(150), default="")
-    second_name: Mapped[str] = mapped_column(String(150), default="", index=True)
-    last_name: Mapped[str] = mapped_column(String(150), default="")
+    last_name: Mapped[str] = mapped_column(String(150), default="", index=True)
     phone_number: Mapped[str] = mapped_column(String(20), unique=True)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False)
     telegram_id: Mapped[int] = mapped_column(Integer, index=True)
+    telegram_username: Mapped[str] = mapped_column(String(32), unique=True)
     user_image: Mapped[str] = mapped_column(String(1048), nullable=True)
 
     def get_full_name(self) -> str:
-        return f"{self.second_name} {self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
         return self.get_full_name() + self.telegram_id
+

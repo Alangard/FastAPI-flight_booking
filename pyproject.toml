@@ -17,6 +17,7 @@ websocket = "^0.2.1"
 pydantic-settings = "^2.3.4"
 psycopg2 = "^2.9.9"
 asyncpg = "^0.29.0"
+aiogram = "^3.8.0"
 
 
 [build-system]

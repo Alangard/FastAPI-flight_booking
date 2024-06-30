@@ -11,6 +11,8 @@ class GlobalSettings(BaseSettings):
     DB_NAME: str = "postgres"
     
     api_prefix: str = "/api/v1"
+    TG_BOT_TOKEN:str
+    TUNNEL_URL:str
 
     # static files
     STATIC_HOST: str = "http://localhost:8001"
