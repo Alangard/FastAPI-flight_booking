@@ -12,7 +12,7 @@ class GlobalSettings(BaseSettings):
     
     api_prefix: str = "/api/v1"
     TG_BOT_TOKEN:str
-    TUNNEL_URL:str
+    TUNNEL_URL:str 
 
     # static files
     STATIC_HOST: str = "http://localhost:8001"

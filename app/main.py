@@ -12,6 +12,9 @@ from app.database import BaseModel, engine
 from app.schedule.router import router as schedule_router
 from app.users.router import router as users_router
 
+import logging
+import uvicorn
+
 
 WEBHOOK_PATH = f"/bot/{settings.TG_BOT_TOKEN}"
 WEBHOOK_URL = f"{settings.TUNNEL_URL}{WEBHOOK_PATH}"
@@ -34,18 +37,13 @@ async def lifespan(app: FastAPI):
     #     await connection.run_sync(BaseModel.metadata.create_all)
 
     await bot.set_webhook(
-        url=WEBHOOK_URL, 
-        allowed_updates=dp.resolve_used_update_types()
-    )
-    
-    try:
-        yield
-    finally:
-        # Cleanup actions
-        # await engine.dispose()
-        await bot.delete_webhook()
-        await bot.session.close()
-    
+        url=WEBHOOK_URL,
+        allowed_updates=dp.resolve_used_update_types(),
+        drop_pending_updates=True)
+    yield
+    await bot.delete_webhook()
+    await bot.session.close()
+
 
 app = FastAPI(title="FastAPI-telegram_bot", lifespan=lifespan)
 templates = Jinja2Templates(directory="app/templates")
@@ -65,6 +63,8 @@ async def bot_webhook(update: dict):
     """
 
     await dp.feed_webhook_update(bot=bot, update=telegram_update)
+
+
     # await dp.process_update(telegram_update)
 
 @app.get("/")
@@ -72,7 +72,3 @@ async def root(request: Request):
     return 
 
     
-
-
-
-
