@@ -6,8 +6,8 @@
     </div>
 
     <div class="d-flex flex-row justify-center" style="position: absolute; top: 100px; width: 100vw;">
-          <!-- <Main></Main> -->
-          <SearchResult></SearchResult>
+          <Main></Main>
+          <!-- <SearchResult></SearchResult> -->
 
     </div>    
 

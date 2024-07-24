@@ -9,7 +9,8 @@ from app.bot.bot import dp, bot
 
 from app.config import settings
 from app.database import BaseModel, engine
-from app.schedule.router import router as schedule_router
+from app.populate_db import generate_fake_data
+from app.api.router import router as api_router
 from app.users.router import router as users_router
 
 import logging
@@ -33,8 +34,12 @@ async def lifespan(app: FastAPI):
     - Closes aiohttp session
     """ 
 
-    # async with engine.begin() as connection:
-    #     await connection.run_sync(BaseModel.metadata.create_all)
+    async with engine.begin() as connection:
+        await connection.run_sync(BaseModel.metadata.create_all)
+
+    # # Инициализация фабрики моковых данных
+    # generate_fake_data()
+
 
     await bot.set_webhook(
         url=WEBHOOK_URL,
@@ -45,15 +50,14 @@ async def lifespan(app: FastAPI):
     await bot.session.close()
 
 
-app = FastAPI(title="FastAPI-telegram_bot", lifespan=lifespan)
-templates = Jinja2Templates(directory="app/templates")
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+application = FastAPI(title="FastAPI-booking", lifespan=lifespan)
+application.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-app.include_router(schedule_router, prefix=settings.api_prefix)
-app.include_router(users_router, prefix=settings.api_prefix)
+application.include_router(api_router, prefix=settings.api_prefix)
+application.include_router(users_router, prefix=settings.api_prefix)
 
 
-@app.post(WEBHOOK_PATH)
+@application.post(WEBHOOK_PATH)
 async def bot_webhook(update: dict):
     telegram_update = types.Update(**update)
 
@@ -67,7 +71,7 @@ async def bot_webhook(update: dict):
 
     # await dp.process_update(telegram_update)
 
-@app.get("/")
+@application.get("/")
 async def root(request: Request):
     return 
 
